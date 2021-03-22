@@ -7,8 +7,8 @@ import time
 # Initialisation de la fenêtre
 fenetre = Tk()
 fenetre.title("Piano - 2021")
-fenetre.geometry("1300x700")
-fenetre.minsize(1200, 200)
+fenetre.geometry("1300x500")
+fenetre.minsize(1200, 400)
 icon = PhotoImage(file='piano.gif')
 fenetre.tk.call('wm', 'iconphoto', fenetre._w, icon)
 
@@ -713,12 +713,80 @@ def la2_n_rel(event=True) :
     la2_n_isPressed = 0
 
 
-# Création de la fonction permettant d'afficher l'aide
 
+
+# Création du piano
+piano = Canvas(fenetre, height=fenetre.winfo_height()/1.5, width=fenetre.winfo_width(), bg='blue')
+piano.pack(expand=True)
+
+
+# Création de chaque touches indépendemment pour plus de contrôle
+y, x = fenetre.winfo_height()/1.5, fenetre.winfo_width()/14
+
+# Création de la fonction permettant d'afficher l'aide
+aideActive = False
 def aideFunc() :
-    aideFen = Toplevel(fenetre)
-    aideFen.title("Aide")
-    aideFen.config(height=200, width=200)
+    if aideActive == False :
+         A = piano.create_text(x, y/2, text="A", fill="white", font=("Helvetica", 18))
+         Z = piano.create_text(x*2, y/2, text="Z", fill="white", font=("Helvetica", 18))
+         E = piano.create_text(x*4, y/2, text="E", fill="white", font=("Helvetica", 18))
+         R = piano.create_text(x*5, y/2, text="R", fill="white", font=("Helvetica", 18))
+         T = piano.create_text(x*6, y/2, text="T", fill="white", font=("Helvetica", 18))
+         Y = piano.create_text(x*8, y/2, text="Y", fill="white", font=("Helvetica", 18))
+         U = piano.create_text(x*9, y/2, text="U", fill="white", font=("Helvetica", 18))
+         I = piano.create_text(x*11, y/2, text="I", fill="white", font=("Helvetica", 18))
+         O = piano.create_text(x*12, y/2, text="O", fill="white", font=("Helvetica", 18))
+         P = piano.create_text(x*13, y/2, text="P", fill="white", font=("Helvetica", 18))
+
+         S = piano.create_text(x*1/2, y*3/4, text="S", fill="black", font=("Helvetica", 18))
+         D = piano.create_text(x*3/2, y*3/4, text="D", fill="black", font=("Helvetica", 18))
+         F = piano.create_text(x*5/2, y*3/4, text="F", fill="black", font=("Helvetica", 18))
+         G = piano.create_text(x*7/2, y*3/4, text="G", fill="black", font=("Helvetica", 18))
+         H = piano.create_text(x*9/2, y*3/4, text="H", fill="black", font=("Helvetica", 18))
+         J = piano.create_text(x*11/2, y*3/4, text="J", fill="black", font=("Helvetica", 18))
+         K = piano.create_text(x*13/2, y*3/4, text="K", fill="black", font=("Helvetica", 18))
+
+         W = piano.create_text(x*15/2, y*3/4, text="W", fill="black", font=("Helvetica", 18))
+         X = piano.create_text(x*17/2, y*3/4, text="X", fill="black", font=("Helvetica", 18))
+         C = piano.create_text(x*19/2, y*3/4, text="C", fill="black", font=("Helvetica", 18))
+         V = piano.create_text(x*21/2, y*3/4, text="V", fill="black", font=("Helvetica", 18))
+         B = piano.create_text(x*23/2, y*3/4, text="B", fill="black", font=("Helvetica", 18))
+         N = piano.create_text(x*25/2, y*3/4, text="N", fill="black", font=("Helvetica", 18))
+         comma = piano.create_text(x*27/2, y*3/4, text=",", fill="black", font=("Helvetica", 18))
+
+
+
+
+
+DO1 = piano.create_rectangle(0, 0, x, y, outline="black", fill="white", width=4)
+RE1 = piano.create_rectangle(x, 0, 2 * x, y, outline="black", fill="white", width=4)
+MI1 = piano.create_rectangle(2 * x, 0, 3 * x, y, outline="black", fill="white", width=4)
+FA1 = piano.create_rectangle(3 * x, 0, 4 * x, y, outline="black", fill="white", width=4)
+SOL1 = piano.create_rectangle(4 * x, 0, 5 * x, y, outline="black", fill="white", width=4)
+LA1 = piano.create_rectangle(5 * x, 0, 6 * x, y, outline="black", fill="white", width=4)
+SI1 = piano.create_rectangle(6 * x, 0, 7 * x, y, outline="black", fill="white", width=4)
+
+DO1_n = piano.create_rectangle(x * 3/4, 0, x * 5/4, y * 2/3, outline="black", fill="black", width=4)
+RE1_n = piano.create_rectangle(x * 7/4 , 0, x * 9/4, y * 2/3, outline="black", fill="black", width=4)
+FA1_n = piano.create_rectangle(x * 15/4, 0, x * 17/4, y * 2/3, outline="black", fill="black", width=4)
+SOL1_n = piano.create_rectangle(x * 19/4, 0, x * 21/4, y * 2/3, outline="black", fill="black", width=4)
+LA1_n = piano.create_rectangle(x * 23/4, 0, x * 25/4, y * 2/3, outline="black", fill="black", width=4)
+
+DO2 = piano.create_rectangle(7 * x, 0, 8 * x, y, outline="black", fill="white", width=4)
+RE2 = piano.create_rectangle(8 * x, 0, 9 * x, y, outline="black", fill="white", width=4)
+MI2 = piano.create_rectangle(9 * x, 0, 10 * x, y, outline="black", fill="white", width=4)
+FA2 = piano.create_rectangle(10 * x, 0, 11 * x, y, outline="black", fill="white", width=4)
+SOL2 = piano.create_rectangle(11 * x, 0, 12 * x, y, outline="black", fill="white", width=4)
+LA2 = piano.create_rectangle(12 * x, 0, 13 * x, y, outline="black", fill="white", width=4)
+SI2 = piano.create_rectangle(13 * x, 0, 14 * x, y, outline="black", fill="white", width=4)
+
+DO2_n = piano.create_rectangle(x * 31/4, 0, x * 33/4, y * 2/3, outline="black", fill="black", width=4)
+RE2_n = piano.create_rectangle(x * 35/4 , 0, x * 37/4, y * 2/3, outline="black", fill="black", width=4)
+FA2_n = piano.create_rectangle(x * 43/4, 0, x * 45/4, y * 2/3, outline="black", fill="black", width=4)
+SOL2_n = piano.create_rectangle(x * 47/4, 0, x * 49/4, y * 2/3, outline="black", fill="black", width=4)
+LA2_n = piano.create_rectangle(x * 51/4, 0, x * 53/4, y * 2/3, outline="black", fill="black", width=4)
+
+border = piano.create_rectangle(0,0,fenetre.winfo_width(),fenetre.winfo_height() / 1.5,outline="black",width=10)
 
 # Création du menu
 
@@ -748,42 +816,7 @@ mainMenu.add_command(label="Aide", command=aideFunc)
 # menuMetronome = Menu(fenetre,tearoff=0, activeforeground='red')
 # mainmenu.add_cascade(label= "Metronome", menu=menuMetronome)
 
-# Création du piano
-piano = Canvas(fenetre, height=fenetre.winfo_height()/2, width=fenetre.winfo_width(), bg='blue')
-piano.pack(expand=True)
 
-
-# Création de chaque touches indépendemment pour plus de contrôle
-y, x = fenetre.winfo_height()/2, fenetre.winfo_width()/14
-DO1 = piano.create_rectangle(0, 0, x, y, outline="black", fill="white", width=4)
-RE1 = piano.create_rectangle(x, 0, 2 * x, y, outline="black", fill="white", width=4)
-MI1 = piano.create_rectangle(2 * x, 0, 3 * x, y, outline="black", fill="white", width=4)
-FA1 = piano.create_rectangle(3 * x, 0, 4 * x, y, outline="black", fill="white", width=4)
-SOL1 = piano.create_rectangle(4 * x, 0, 5 * x, y, outline="black", fill="white", width=4)
-LA1 = piano.create_rectangle(5 * x, 0, 6 * x, y, outline="black", fill="white", width=4)
-SI1 = piano.create_rectangle(6 * x, 0, 7 * x, y, outline="black", fill="white", width=4)
-
-DO1_n = piano.create_rectangle(x * 3/4, 0, x * 5/4, y * 2/3, outline="black", fill="black", width=4)
-RE1_n = piano.create_rectangle(x * 7/4 , 0, x * 9/4, y * 2/3, outline="black", fill="black", width=4)
-FA1_n = piano.create_rectangle(x * 15/4, 0, x * 17/4, y * 2/3, outline="black", fill="black", width=4)
-SOL1_n = piano.create_rectangle(x * 19/4, 0, x * 21/4, y * 2/3, outline="black", fill="black", width=4)
-LA1_n = piano.create_rectangle(x * 23/4, 0, x * 25/4, y * 2/3, outline="black", fill="black", width=4)
-
-DO2 = piano.create_rectangle(7 * x, 0, 8 * x, y, outline="black", fill="white", width=4)
-RE2 = piano.create_rectangle(8 * x, 0, 9 * x, y, outline="black", fill="white", width=4)
-MI2 = piano.create_rectangle(9 * x, 0, 10 * x, y, outline="black", fill="white", width=4)
-FA2 = piano.create_rectangle(10 * x, 0, 11 * x, y, outline="black", fill="white", width=4)
-SOL2 = piano.create_rectangle(11 * x, 0, 12 * x, y, outline="black", fill="white", width=4)
-LA2 = piano.create_rectangle(12 * x, 0, 13 * x, y, outline="black", fill="white", width=4)
-SI2 = piano.create_rectangle(13 * x, 0, 14 * x, y, outline="black", fill="white", width=4)
-
-DO2_n = piano.create_rectangle(x * 31/4, 0, x * 33/4, y * 2/3, outline="black", fill="black", width=4)
-RE2_n = piano.create_rectangle(x * 35/4 , 0, x * 37/4, y * 2/3, outline="black", fill="black", width=4)
-FA2_n = piano.create_rectangle(x * 43/4, 0, x * 45/4, y * 2/3, outline="black", fill="black", width=4)
-SOL2_n = piano.create_rectangle(x * 47/4, 0, x * 49/4, y * 2/3, outline="black", fill="black", width=4)
-LA2_n = piano.create_rectangle(x * 51/4, 0, x * 53/4, y * 2/3, outline="black", fill="black", width=4)
-
-border = piano.create_rectangle(0,0,fenetre.winfo_width(),fenetre.winfo_height() / 2,outline="black",width=10)
 
 # Bind des touches aux fonctions
 fenetre.bind('<KeyPress-s>', do1_app)
