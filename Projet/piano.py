@@ -4,6 +4,7 @@ from PIL import ImageTk, Image
 import simpleaudio as sa
 import time
 import csv
+import os
 
 # Initialisation de la fenêtre
 fenetre = Tk()
@@ -16,6 +17,120 @@ fenetre.tk.call('wm', 'iconphoto', fenetre._w, icon)
 
 # Déclaration des fonctions
 
+# Déclaration de la fonction permettant d'enregistrer
+
+recordnb = 0
+recording = False
+def startRecording():
+    global recording, recordnb, notif
+    if recordnb < 1:
+        recording = True
+        menuEnregistrer.entryconfigure(0, state=DISABLED)
+        menuEnregistrer.entryconfigure(1, state=NORMAL)
+        with open('Enregistrements/tempName.csv', 'w', newline='') as file:
+            global fieldnames
+            fieldnames = ['id', 'note', 'startTime', 'endTime']
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+        recordnb += 1
+        global id
+        id = 0
+        notif = Label(fenetre, text="Enregistrement en cours...")
+        notif.pack()
+    else:
+        pass
+
+
+# Déclaration des fonctions permettant d'arrêter l'enregistrement
+def infermable() :
+    pass
+
+def sauvegarderEnregistrement() :
+    if fileName.get() == "tempName" :
+        erreur = Label(save, text="Nom de fichier invalide", bg="red")
+        erreur.pack(expand=True)
+    else:
+        fichierPath = 'Enregistrements/' + fileName.get() + '.csv'
+        os.rename('Enregistrements/tempName.csv', fichierPath)
+        save.destroy()
+
+def stopRecording() :
+    global recording, recordnb, notif, fileName, save
+    notif.destroy()
+    recording = False
+    recordnb = 0
+    menuEnregistrer.entryconfigure(0, state=NORMAL)
+    menuEnregistrer.entryconfigure(1, state=DISABLED)
+    save = Toplevel(fenetre)
+    save.protocol("WM_DELETE_WINDOW", test)
+    save.title("Sauvergarder")
+    save.geometry("250x150")
+    save.resizable(False, False)
+
+    text = Label(save, text="Entrez le nom de l'enregistrement")
+    text.pack(expand=True)
+
+    fileName = Entry(save)
+    fileName.pack(expand=True)
+
+    sauvegarder = Button(save, text="Sauvegarder", command=sauvegarderEnregistrement)
+    sauvegarder.pack(expand=True)
+
+
+# Déclaration de la fonction permettant de parcourir les enregistrements
+
+def creation(nomDuFichier, i) :
+    nomDuFichier = [Label(frame, text=nomDuFichier), Button(frame, text="Jouer l'enregistrement"), Button(frame, text="Supprimer")]
+
+    nomDuFichier[0].grid(column=0, row=i, padx = 10, pady = 10)
+    nomDuFichier[1].grid(column=1, row=i, padx = 10, pady = 10)
+    nomDuFichier[2].grid(column=2, row=i, padx = 10, pady = 10)
+
+
+    Files.append({'file': nomFichiers[-1], 'play': nomDuFichier[1], 'delete': nomDuFichier[2]})
+
+def onFrameConfigure(canvas):
+    canvas.configure(scrollregion=canvas.bbox("all"))
+
+
+def parcours() :
+    global frame, explorer
+    explorer = Toplevel(fenetre)
+    explorer.title("Parcourir")
+    explorer.geometry("500x400")
+    explorer.resizable(False, False)
+    explorer.grab_set()
+
+    # Permet de scroller
+    canvas = Canvas(explorer, borderwidth=0, background="#ffffff")
+    scrollbar = Scrollbar(explorer, orient="vertical", command=canvas.yview)
+    canvas.configure(yscrollcommand=scrollbar.set)
+    frame = Frame(canvas, background="#ffffff")
+
+    scrollbar.pack(side="right", fill="y")
+    canvas.pack(side="left", fill="both", expand=True)
+    canvas.create_window((4,4), window=frame, anchor="nw")
+
+    frame.bind("<Configure>", lambda event, canvas=canvas: onFrameConfigure(canvas))
+
+    global Files
+    Files = []
+    global nomFichiers
+    nomFichiers = []
+    path = os.getcwd() + "/Enregistrements"
+    filename = ""
+    if (os.listdir(path)) == [] :
+        erreur = Label(canvas, text="Aucun enregistrement disponible")
+        erreur.pack(expand=True)
+    else:
+        for e, files in enumerate(os.listdir(path)) :
+            for i in files :
+                if i == "." :
+                    break
+                else:
+                    filename += i
+            nomFichiers.append(filename)
+            creation(filename, e)
+            filename = ""
 
     # DO - Octave 1
 do1_note = sa.WaveObject.from_wave_file("Notes/DO1.wav")
@@ -36,6 +151,7 @@ def do1_app(event=True) :
         if recording == True :
             global dict_do1
             dict_do1 = {'id': id, 'note': 'do1', 'startTime': time.time(), 'endTime': ''}
+            id += 1
 
     do1_isPressed += 1
     print(do1_isPressed)
@@ -50,14 +166,13 @@ def do1_rel(event=True) :
     global do1_isPressed
     do1_isPressed = 0
 
-    global recording, dict_do1, id
+    global recording, dict_do1
     if recording == True :
         dict_do1['endTime'] = time.time()
-        with open('tempName.csv', 'w', newline='') as file:
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
             global fieldnames
             writer = csv.DictWriter(file, fieldnames=fieldnames)
             writer.writerow(dict_do1)
-        id += 1
 
 
     # RE - Octave 1
@@ -75,6 +190,12 @@ def re1_app(event=True) :
         re1_joue = re1_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_re1
+            dict_re1 = {'id': id, 'note': 're1', 'startTime': time.time(), 'endTime': ''}
+            id += 1
+
     re1_isPressed += 1
     print(re1_isPressed)
 
@@ -87,6 +208,14 @@ def re1_rel(event=True) :
     re1_joue.stop()
     global re1_isPressed
     re1_isPressed = 0
+
+    global recording, dict_re1
+    if recording == True:
+        dict_re1['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_re1)
 
 
     # MI - Octave 1
@@ -104,6 +233,12 @@ def mi1_app(event=True) :
         mi1_joue = mi1_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_mi1
+            dict_mi1 = {'id': id, 'note': 'mi1', 'startTime': time.time(), 'endTime': ''}
+            id += 1
+
     mi1_isPressed += 1
     print(mi1_isPressed)
 
@@ -116,6 +251,15 @@ def mi1_rel(event=True) :
     mi1_joue.stop()
     global mi1_isPressed
     mi1_isPressed = 0
+
+    global recording, dict_mi1
+    if recording == True:
+        dict_mi1['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_mi1)
+
 
 
     # FA - Octave 1
@@ -133,6 +277,12 @@ def fa1_app(event=True) :
         fa1_joue = fa1_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_fa1
+            dict_fa1 = {'id': id, 'note': 'fa1', 'startTime': time.time(),'endTime': ''}
+            id += 1
+
     fa1_isPressed += 1
     print(fa1_isPressed)
 
@@ -145,6 +295,15 @@ def fa1_rel(event=True) :
     fa1_joue.stop()
     global fa1_isPressed
     fa1_isPressed = 0
+
+    global recording, dict_fa1
+    if recording == True:
+        dict_fa1['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_fa1)
+
 
 
     # SOL - Octave 1
@@ -162,6 +321,12 @@ def sol1_app(event=True) :
         sol1_joue = sol1_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_sol1
+            dict_sol1 = {'id': id, 'note': 'sol1', 'startTime': time.time(),'endTime': ''}
+            id += 1
+
     sol1_isPressed += 1
     print(sol1_isPressed)
 
@@ -174,6 +339,15 @@ def sol1_rel(event=True) :
     sol1_joue.stop()
     global sol1_isPressed
     sol1_isPressed = 0
+
+    global recording, dict_sol1
+    if recording == True:
+        dict_sol1['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_sol1)
+
 
 
     # LA - Octave 1
@@ -191,6 +365,12 @@ def la1_app(event=True) :
         la1_joue = la1_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_la1
+            dict_la1 = {'id': id, 'note': 'la1', 'startTime': time.time(), 'endTime': ''}
+            id += 1
+
     la1_isPressed += 1
     print(la1_isPressed)
 
@@ -204,6 +384,15 @@ def la1_rel(event=True) :
     la1_joue.stop()
     global la1_isPressed
     la1_isPressed = 0
+
+    global recording, dict_la1
+    if recording == True:
+        dict_la1['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_la1)
+
 
 
     # SI - Octave 1
@@ -221,6 +410,12 @@ def si1_app(event=True) :
         si1_joue = si1_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_si1
+            dict_si1 = {'id': id, 'note': 'si1', 'startTime': time.time(), 'endTime': ''}
+            id += 1
+
     si1_isPressed += 1
     print(si1_isPressed)
 
@@ -233,6 +428,15 @@ def si1_rel(event=True) :
     si1_joue.stop()
     global si1_isPressed
     si1_isPressed = 0
+
+    global recording, dict_si1
+    if recording == True:
+        dict_si1['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_si1)
+
 
 
     # DO# - Octave 1
@@ -250,6 +454,13 @@ def do1_n_app(event=True) :
         do1_n_joue = do1_n_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_do_n1
+            dict_do_n1 = {'id': id, 'note': 'do_n1', 'startTime': time.time(), 'endTime': ''}
+            id += 1
+
+
     do1_n_isPressed += 1
     print(do1_n_isPressed)
 
@@ -262,6 +473,15 @@ def do1_n_rel(event=True) :
     do1_n_joue.stop()
     global do1_n_isPressed
     do1_n_isPressed = 0
+
+    global recording, dict_do_n1
+    if recording == True:
+        dict_do_n1['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_do_n1)
+
 
 
     # RE# - Octave 1
@@ -279,6 +499,13 @@ def re1_n_app(event=True) :
         re1_n_joue = re1_n_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_re_n1
+            dict_re_n1 = {'id': id, 'note': 're_n1', 'startTime': time.time(), 'endTime': ''}
+            id += 1
+
+
     re1_n_isPressed += 1
     print(re1_n_isPressed)
 
@@ -291,6 +518,14 @@ def re1_n_rel(event=True) :
     re1_n_joue.stop()
     global re1_n_isPressed
     re1_n_isPressed = 0
+
+    global recording, dict_re_n1
+    if recording == True:
+        dict_re_n1['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_re_n1)
 
 
     # FA# - Octave 1
@@ -308,6 +543,13 @@ def fa1_n_app(event=True) :
         fa1_n_joue = fa1_n_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_fa_n1
+            dict_fa_n1 = {'id': id, 'note': 'fa_n1', 'startTime': time.time(), 'endTime': ''}
+            id += 1
+
+
     fa1_n_isPressed += 1
     print(fa1_n_isPressed)
 
@@ -320,6 +562,14 @@ def fa1_n_rel(event=True) :
     fa1_n_joue.stop()
     global fa1_n_isPressed
     fa1_n_isPressed = 0
+
+    global recording, dict_fa_n1
+    if recording == True:
+        dict_fa_n1['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_fa_n1)
 
 
     # SOL# - Octave 1
@@ -337,6 +587,13 @@ def sol1_n_app(event=True) :
         sol1_n_joue = sol1_n_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_sol_n1
+            dict_sol_n1 = {'id': id, 'note': 'sol_n1', 'startTime': time.time(), 'endTime': ''}
+            id += 1
+
+
     sol1_n_isPressed += 1
     print(sol1_n_isPressed)
 
@@ -349,6 +606,14 @@ def sol1_n_rel(event=True) :
     sol1_n_joue.stop()
     global sol1_n_isPressed
     sol1_n_isPressed = 0
+
+    global recording, dict_sol_n1
+    if recording == True:
+        dict_sol_n1['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_sol_n1)
 
 
     # LA# - Octave 1
@@ -366,6 +631,13 @@ def la1_n_app(event=True) :
         la1_n_joue = la1_n_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_la_n1
+            dict_la_n1 = {'id': id, 'note': 'la_n1', 'startTime': time.time(), 'endTime': ''}
+            id += 1
+
+
     la1_n_isPressed += 1
     print(la1_n_isPressed)
 
@@ -378,6 +650,14 @@ def la1_n_rel(event=True) :
     la1_n_joue.stop()
     global la1_n_isPressed
     la1_n_isPressed = 0
+
+    global recording, dict_la_n1
+    if recording == True:
+        dict_la_n1['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_la_n1)
 
 
     # DO - Octave 2
@@ -395,6 +675,12 @@ def do2_app(event=True) :
         do2_joue = do2_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_do2
+            dict_do2 = {'id': id, 'note': 'do2', 'startTime': time.time(),'endTime': ''}
+            id += 1
+
     do2_isPressed += 1
     print(do1_isPressed)
 
@@ -407,6 +693,14 @@ def do2_rel(event=True) :
     do2_joue.stop()
     global do2_isPressed
     do2_isPressed = 0
+
+    global recording, dict_do2
+    if recording == True:
+        dict_do2['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_do2)
 
 
     # RE - Octave 2
@@ -424,6 +718,12 @@ def re2_app(event=True) :
         re2_joue = re2_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_re2
+            dict_re2 = {'id': id, 'note': 're2', 'startTime': time.time(),'endTime': ''}
+            id += 1
+
     re2_isPressed += 1
     print(re2_isPressed)
 
@@ -436,6 +736,14 @@ def re2_rel(event=True) :
     re2_joue.stop()
     global re2_isPressed
     re2_isPressed = 0
+
+    global recording, dict_re2
+    if recording == True:
+        dict_re2['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_re2)
 
 
     # MI - Octave 2
@@ -453,6 +761,12 @@ def mi2_app(event=True) :
         mi2_joue = mi2_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_mi2
+            dict_mi2 = {'id': id, 'note': 'mi2', 'startTime': time.time(),'endTime': ''}
+            id += 1
+
     mi2_isPressed += 1
     print(do1_isPressed)
 
@@ -465,6 +779,14 @@ def mi2_rel(event=True) :
     mi2_joue.stop()
     global mi2_isPressed
     mi2_isPressed = 0
+
+    global recording, dict_mi2
+    if recording == True:
+        dict_mi2['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_mi2)
 
 
     # FA - Octave 2
@@ -482,6 +804,12 @@ def fa2_app(event=True) :
         fa2_joue = fa2_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_fa2
+            dict_fa2 = {'id': id, 'note': 'fa2', 'startTime': time.time(),'endTime': ''}
+            id += 1
+
     fa2_isPressed += 1
     print(fa2_isPressed)
 
@@ -494,6 +822,14 @@ def fa2_rel(event=True) :
     fa2_joue.stop()
     global fa2_isPressed
     fa2_isPressed = 0
+
+    global recording, dict_fa2
+    if recording == True:
+        dict_fa2['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_fa2)
 
 
     # SOL - Octave 2
@@ -511,6 +847,12 @@ def sol2_app(event=True) :
         sol2_joue = sol2_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_sol2
+            dict_sol2 = {'id': id, 'note': 'sol2', 'startTime': time.time(),'endTime': ''}
+            id += 1
+
     sol2_isPressed += 1
     print(sol2_isPressed)
 
@@ -523,6 +865,14 @@ def sol2_rel(event=True) :
     sol2_joue.stop()
     global sol2_isPressed
     sol2_isPressed = 0
+
+    global recording, dict_sol2
+    if recording == True:
+        dict_sol2['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_sol2)
 
 
     # LA - Octave 2
@@ -540,6 +890,12 @@ def la2_app(event=True) :
         la2_joue = la2_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_la2
+            dict_la2 = {'id': id, 'note': 'la2', 'startTime': time.time(),'endTime': ''}
+            id += 1
+
     la2_isPressed += 1
     print(la2_isPressed)
 
@@ -552,6 +908,14 @@ def la2_rel(event=True) :
     la2_joue.stop()
     global la2_isPressed
     la2_isPressed = 0
+
+    global recording, dict_la2
+    if recording == True:
+        dict_la2['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_la2)
 
 
     # SI - Octave 2
@@ -569,6 +933,12 @@ def si2_app(event=True) :
         si2_joue = si2_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_si2
+            dict_si2 = {'id': id, 'note': 'si2', 'startTime': time.time(),'endTime': ''}
+            id += 1
+
     si2_isPressed += 1
     print(si2_isPressed)
 
@@ -581,6 +951,14 @@ def si2_rel(event=True) :
     si2_joue.stop()
     global si2_isPressed
     si2_isPressed = 0
+
+    global recording, dict_si2
+    if recording == True:
+        dict_si2['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_si2)
 
 
     # DO# - Octave 2
@@ -598,6 +976,12 @@ def do2_n_app(event=True) :
         do2_n_joue = do2_n_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_do_n2
+            dict_do_n2 = {'id': id, 'note': 'do_n2', 'startTime': time.time(), 'endTime': ''}
+            id += 1
+
     do2_n_isPressed += 1
     print(do2_n_isPressed)
 
@@ -610,6 +994,14 @@ def do2_n_rel(event=True) :
     do2_n_joue.stop()
     global do2_n_isPressed
     do2_n_isPressed = 0
+
+    global recording, dict_do_n2
+    if recording == True:
+        dict_do_n2['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_do_n2)
 
 
     # RE# - Octave 2
@@ -627,6 +1019,12 @@ def re2_n_app(event=True) :
         re2_n_joue = re2_n_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_re_n2
+            dict_re_n2 = {'id': id, 'note': 're_n2', 'startTime': time.time(), 'endTime': ''}
+            id += 1
+
     re2_n_isPressed += 1
     print(re2_n_isPressed)
 
@@ -639,6 +1037,14 @@ def re2_n_rel(event=True) :
     re2_n_joue.stop()
     global re2_n_isPressed
     re2_n_isPressed = 0
+
+    global recording, dict_re_n2
+    if recording == True:
+        dict_re_n2['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_re_n2)
 
 
     # FA# - Octave 2
@@ -656,6 +1062,12 @@ def fa2_n_app(event=True) :
         fa2_n_joue = fa2_n_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_fa_n2
+            dict_fa_n2 = {'id': id, 'note': 'fa_n2', 'startTime': time.time(), 'endTime': ''}
+            id += 1
+
     fa2_n_isPressed += 1
     print(fa2_n_isPressed)
 
@@ -668,6 +1080,14 @@ def fa2_n_rel(event=True) :
     fa2_n_joue.stop()
     global fa2_n_isPressed
     fa2_n_isPressed = 0
+
+    global recording, dict_fa_n2
+    if recording == True:
+        dict_fa_n2['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_fa_n2)
 
 
     # SOL# - Octave 2
@@ -685,6 +1105,12 @@ def sol2_n_app(event=True) :
         sol2_n_joue = sol2_n_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_sol_n2
+            dict_sol_n2 = {'id': id, 'note': 'sol_n2', 'startTime': time.time(), 'endTime': ''}
+            id += 1
+
     sol2_n_isPressed += 1
     print(sol2_n_isPressed)
 
@@ -697,6 +1123,14 @@ def sol2_n_rel(event=True) :
     sol2_n_joue.stop()
     global sol2_n_isPressed
     sol2_n_isPressed = 0
+
+    global recording, dict_sol_n2
+    if recording == True:
+        dict_sol_n2['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_sol_n2)
 
 
     # LA# - Octave 2
@@ -714,6 +1148,12 @@ def la2_n_app(event=True) :
         la2_n_joue = la2_n_note.play()
         print("playing")
 
+        global recording, id
+        if recording == True :
+            global dict_la_n2
+            dict_la_n2 = {'id': id, 'note': 'la_n2', 'startTime': time.time(), 'endTime': ''}
+            id += 1
+
     la2_n_isPressed += 1
     print(la2_n_isPressed)
 
@@ -727,6 +1167,13 @@ def la2_n_rel(event=True) :
     global la2_n_isPressed
     la2_n_isPressed = 0
 
+    global recording, dict_la_n2
+    if recording == True:
+        dict_la_n2['endTime'] = time.time()
+        with open('Enregistrements/tempName.csv', 'a', newline='') as file:
+            global fieldnames
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writerow(dict_la_n2)
 
 
 
@@ -744,34 +1191,34 @@ aideActive = False
 def aideFunc() :
     global aideActive, A, Z, E, R, T, Y, U, I, O, P, S, D, F, G, H, J, K, W, X, C, V, B, N, comma
     if aideActive == False :
-         A = piano.create_text(x, y/2, text="A", fill="white", font=("Helvetica", 18))
-         Z = piano.create_text(x*2, y/2, text="Z", fill="white", font=("Helvetica", 18))
-         E = piano.create_text(x*4, y/2, text="E", fill="white", font=("Helvetica", 18))
-         R = piano.create_text(x*5, y/2, text="R", fill="white", font=("Helvetica", 18))
-         T = piano.create_text(x*6, y/2, text="T", fill="white", font=("Helvetica", 18))
-         Y = piano.create_text(x*8, y/2, text="Y", fill="white", font=("Helvetica", 18))
-         U = piano.create_text(x*9, y/2, text="U", fill="white", font=("Helvetica", 18))
-         I = piano.create_text(x*11, y/2, text="I", fill="white", font=("Helvetica", 18))
-         O = piano.create_text(x*12, y/2, text="O", fill="white", font=("Helvetica", 18))
-         P = piano.create_text(x*13, y/2, text="P", fill="white", font=("Helvetica", 18))
+        A = piano.create_text(x, y/2, text="A", fill="white", font=("Helvetica", 18))
+        Z = piano.create_text(x*2, y/2, text="Z", fill="white", font=("Helvetica", 18))
+        E = piano.create_text(x*4, y/2, text="E", fill="white", font=("Helvetica", 18))
+        R = piano.create_text(x*5, y/2, text="R", fill="white", font=("Helvetica", 18))
+        T = piano.create_text(x*6, y/2, text="T", fill="white", font=("Helvetica", 18))
+        Y = piano.create_text(x*8, y/2, text="Y", fill="white", font=("Helvetica", 18))
+        U = piano.create_text(x*9, y/2, text="U", fill="white", font=("Helvetica", 18))
+        I = piano.create_text(x*11, y/2, text="I", fill="white", font=("Helvetica", 18))
+        O = piano.create_text(x*12, y/2, text="O", fill="white", font=("Helvetica", 18))
+        P = piano.create_text(x*13, y/2, text="P", fill="white", font=("Helvetica", 18))
 
-         S = piano.create_text(x*1/2, y*3/4, text="S", fill="black", font=("Helvetica", 18))
-         D = piano.create_text(x*3/2, y*3/4, text="D", fill="black", font=("Helvetica", 18))
-         F = piano.create_text(x*5/2, y*3/4, text="F", fill="black", font=("Helvetica", 18))
-         G = piano.create_text(x*7/2, y*3/4, text="G", fill="black", font=("Helvetica", 18))
-         H = piano.create_text(x*9/2, y*3/4, text="H", fill="black", font=("Helvetica", 18))
-         J = piano.create_text(x*11/2, y*3/4, text="J", fill="black", font=("Helvetica", 18))
-         K = piano.create_text(x*13/2, y*3/4, text="K", fill="black", font=("Helvetica", 18))
+        S = piano.create_text(x*1/2, y*3/4, text="S", fill="black", font=("Helvetica", 18))
+        D = piano.create_text(x*3/2, y*3/4, text="D", fill="black", font=("Helvetica", 18))
+        F = piano.create_text(x*5/2, y*3/4, text="F", fill="black", font=("Helvetica", 18))
+        G = piano.create_text(x*7/2, y*3/4, text="G", fill="black", font=("Helvetica", 18))
+        H = piano.create_text(x*9/2, y*3/4, text="H", fill="black", font=("Helvetica", 18))
+        J = piano.create_text(x*11/2, y*3/4, text="J", fill="black", font=("Helvetica", 18))
+        K = piano.create_text(x*13/2, y*3/4, text="K", fill="black", font=("Helvetica", 18))
 
-         W = piano.create_text(x*15/2, y*3/4, text="W", fill="black", font=("Helvetica", 18))
-         X = piano.create_text(x*17/2, y*3/4, text="X", fill="black", font=("Helvetica", 18))
-         C = piano.create_text(x*19/2, y*3/4, text="C", fill="black", font=("Helvetica", 18))
-         V = piano.create_text(x*21/2, y*3/4, text="V", fill="black", font=("Helvetica", 18))
-         B = piano.create_text(x*23/2, y*3/4, text="B", fill="black", font=("Helvetica", 18))
-         N = piano.create_text(x*25/2, y*3/4, text="N", fill="black", font=("Helvetica", 18))
-         comma = piano.create_text(x*27/2, y*3/4, text=",", fill="black", font=("Helvetica", 18))
+        W = piano.create_text(x*15/2, y*3/4, text="W", fill="black", font=("Helvetica", 18))
+        X = piano.create_text(x*17/2, y*3/4, text="X", fill="black", font=("Helvetica", 18))
+        C = piano.create_text(x*19/2, y*3/4, text="C", fill="black", font=("Helvetica", 18))
+        V = piano.create_text(x*21/2, y*3/4, text="V", fill="black", font=("Helvetica", 18))
+        B = piano.create_text(x*23/2, y*3/4, text="B", fill="black", font=("Helvetica", 18))
+        N = piano.create_text(x*25/2, y*3/4, text="N", fill="black", font=("Helvetica", 18))
+        comma = piano.create_text(x*27/2, y*3/4, text=",", fill="black", font=("Helvetica", 18))
 
-         aideActive = True
+        aideActive = True
 
     else:
         piano.delete(A)
@@ -834,23 +1281,6 @@ LA2_n = piano.create_rectangle(x * 51/4, 0, x * 53/4, y * 2/3, outline="black", 
 
 border = piano.create_rectangle(0,0,fenetre.winfo_width(),fenetre.winfo_height() / 1.5,outline="black",width=10)
 
-# Record
-recordnb = 0
-def startRecording() :
-    global recording, recordnb
-    if recordnb < 1 :
-        recording = True
-        menuEnregistrer.entryconfigure(0, state=DISABLED)
-        with open('tempName.csv', 'w', newline='') as file:
-            global fieldnames
-            fieldnames = ['id', 'note', 'startTime', 'endTime']
-            writer = csv.DictWriter(file, fieldnames=fieldnames)
-        recordnb+=1
-        global id
-        id = 0
-    else :
-        pass
-
 # Création du menu
 
 def test() :
@@ -864,13 +1294,9 @@ menuEnregistrer = Menu(fenetre, tearoff=0, activebackground='red')
 mainMenu.add_cascade(label="Fichier", menu=menuEnregistrer)
 
 menuEnregistrer.add_command(label="Commencer l'enregistrement", command=startRecording)
-menuEnregistrer.add_command(label="Arrêter l'enregistrement", command=test)
-
-menuFichier = Menu(fenetre, tearoff=0, activebackground='red')
-menuEnregistrer.add_cascade(label="Parcourir les enregistrements", menu=menuFichier)
-
-menuFichier.add_command(label="Jouer un enregistrement", command=test)
-menuFichier.add_command(label="Supprimer un enregistrement", command=test)
+menuEnregistrer.add_command(label="Arrêter l'enregistrement", command=stopRecording)
+menuEnregistrer.entryconfigure(1, state=DISABLED)
+menuEnregistrer.add_command(label="Parcourir les enregistrements", command=parcours)
 
 
 mainMenu.add_command(label="Aide", command=aideFunc)
