@@ -22,6 +22,10 @@ fenetre.tk.call('wm', 'iconphoto', fenetre._w, icon)
 recordnb = 0
 recording = False
 def startRecording():
+    try:
+        os.makedirs(os.getcwd() + "/Enregistrements")
+    except FileExistsError:
+        pass
     global recording, recordnb, notif
     if recordnb < 1:
         recording = True
