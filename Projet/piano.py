@@ -1,6 +1,10 @@
 # Import des modules nécessaires
 from tkinter import *
-import simpleaudio as sa, time, csv, os
+from PIL import ImageTk, Image
+import simpleaudio as sa
+import time
+import csv
+import os
 
 # Initialisation de la fenêtre
 fenetre = Tk()
@@ -133,7 +137,7 @@ def parcours() :
             filename = ""
 
     # DO - Octave 1
-do1_note = sa.WaveObject.from_wave_file("Notes/DO1.wav")
+do1_note = sa.WaveObject.from_wave_file("Notes/Do 1.wav")
 do1_isPressed = 0
 
 def do1_app(event=True) :
@@ -176,7 +180,7 @@ def do1_rel(event=True) :
 
 
     # RE - Octave 1
-re1_note = sa.WaveObject.from_wave_file("Notes/RE1.wav")
+re1_note = sa.WaveObject.from_wave_file("Notes/Re 1.wav")
 re1_isPressed = 0
 
 def re1_app(event=True) :
@@ -219,7 +223,7 @@ def re1_rel(event=True) :
 
 
     # MI - Octave 1
-mi1_note = sa.WaveObject.from_wave_file("Notes/MI1.wav")
+mi1_note = sa.WaveObject.from_wave_file("Notes/Mi 1.wav")
 mi1_isPressed = 0
 
 def mi1_app(event=True) :
@@ -263,7 +267,7 @@ def mi1_rel(event=True) :
 
 
     # FA - Octave 1
-fa1_note = sa.WaveObject.from_wave_file("Notes/FA1.wav")
+fa1_note = sa.WaveObject.from_wave_file("Notes/Fa 1.wav")
 fa1_isPressed = 0
 
 def fa1_app(event=True) :
@@ -307,7 +311,7 @@ def fa1_rel(event=True) :
 
 
     # SOL - Octave 1
-sol1_note = sa.WaveObject.from_wave_file("Notes/SOL1.wav")
+sol1_note = sa.WaveObject.from_wave_file("Notes/Sol 1.wav")
 sol1_isPressed = 0
 
 def sol1_app(event=True) :
@@ -351,7 +355,7 @@ def sol1_rel(event=True) :
 
 
     # LA - Octave 1
-la1_note = sa.WaveObject.from_wave_file("Notes/LA1.wav")
+la1_note = sa.WaveObject.from_wave_file("Notes/La 1.wav")
 la1_isPressed = 0
 
 def la1_app(event=True) :
@@ -396,7 +400,7 @@ def la1_rel(event=True) :
 
 
     # SI - Octave 1
-si1_note = sa.WaveObject.from_wave_file("Notes/SI1.wav")
+si1_note = sa.WaveObject.from_wave_file("Notes/Si 1.wav")
 si1_isPressed = 0
 
 def si1_app(event=True) :
@@ -440,7 +444,7 @@ def si1_rel(event=True) :
 
 
     # DO# - Octave 1
-do1_n_note = sa.WaveObject.from_wave_file("186942__lemoncreme__piano-melody.wav")
+do1_n_note = sa.WaveObject.from_wave_file("Notes/Do dièse 1.wav")
 do1_n_isPressed = 0
 
 def do1_n_app(event=True) :
@@ -485,7 +489,7 @@ def do1_n_rel(event=True) :
 
 
     # RE# - Octave 1
-re1_n_note = sa.WaveObject.from_wave_file("186942__lemoncreme__piano-melody.wav")
+re1_n_note = sa.WaveObject.from_wave_file("Notes/Re dièse 1.wav")
 re1_n_isPressed = 0
 
 def re1_n_app(event=True) :
@@ -529,7 +533,7 @@ def re1_n_rel(event=True) :
 
 
     # FA# - Octave 1
-fa1_n_note = sa.WaveObject.from_wave_file("186942__lemoncreme__piano-melody.wav")
+fa1_n_note = sa.WaveObject.from_wave_file("Notes/Fa dièse 1.wav")
 fa1_n_isPressed = 0
 
 def fa1_n_app(event=True) :
@@ -573,7 +577,7 @@ def fa1_n_rel(event=True) :
 
 
     # SOL# - Octave 1
-sol1_n_note = sa.WaveObject.from_wave_file("186942__lemoncreme__piano-melody.wav")
+sol1_n_note = sa.WaveObject.from_wave_file("Notes/Sol dièse 1.wav")
 sol1_n_isPressed = 0
 
 def sol1_n_app(event=True) :
@@ -617,7 +621,7 @@ def sol1_n_rel(event=True) :
 
 
     # LA# - Octave 1
-la1_n_note = sa.WaveObject.from_wave_file("186942__lemoncreme__piano-melody.wav")
+la1_n_note = sa.WaveObject.from_wave_file("Notes/La dièse 1.wav")
 la1_n_isPressed = 0
 
 def la1_n_app(event=True) :
@@ -661,7 +665,7 @@ def la1_n_rel(event=True) :
 
 
     # DO - Octave 2
-do2_note = sa.WaveObject.from_wave_file("186942__lemoncreme__piano-melody.wav")
+do2_note = sa.WaveObject.from_wave_file("Notes/Do 2.wav")
 do2_isPressed = 0
 
 def do2_app(event=True) :
@@ -704,7 +708,7 @@ def do2_rel(event=True) :
 
 
     # RE - Octave 2
-re2_note = sa.WaveObject.from_wave_file("186942__lemoncreme__piano-melody.wav")
+re2_note = sa.WaveObject.from_wave_file("Notes/Re 2.wav")
 re2_isPressed = 0
 
 def re2_app(event=True) :
@@ -747,7 +751,7 @@ def re2_rel(event=True) :
 
 
     # MI - Octave 2
-mi2_note = sa.WaveObject.from_wave_file("186942__lemoncreme__piano-melody.wav")
+mi2_note = sa.WaveObject.from_wave_file("Notes/Mi 2.wav")
 mi2_isPressed = 0
 
 def mi2_app(event=True) :
@@ -790,7 +794,7 @@ def mi2_rel(event=True) :
 
 
     # FA - Octave 2
-fa2_note = sa.WaveObject.from_wave_file("186942__lemoncreme__piano-melody.wav")
+fa2_note = sa.WaveObject.from_wave_file("Notes/Fa 2.wav")
 fa2_isPressed = 0
 
 def fa2_app(event=True) :
@@ -833,7 +837,7 @@ def fa2_rel(event=True) :
 
 
     # SOL - Octave 2
-sol2_note = sa.WaveObject.from_wave_file("186942__lemoncreme__piano-melody.wav")
+sol2_note = sa.WaveObject.from_wave_file("Notes/Sol 2.wav")
 sol2_isPressed = 0
 
 def sol2_app(event=True) :
@@ -876,7 +880,7 @@ def sol2_rel(event=True) :
 
 
     # LA - Octave 2
-la2_note = sa.WaveObject.from_wave_file("186942__lemoncreme__piano-melody.wav")
+la2_note = sa.WaveObject.from_wave_file("Notes/La 2.wav")
 la2_isPressed = 0
 
 def la2_app(event=True) :
@@ -919,7 +923,7 @@ def la2_rel(event=True) :
 
 
     # SI - Octave 2
-si2_note = sa.WaveObject.from_wave_file("186942__lemoncreme__piano-melody.wav")
+si2_note = sa.WaveObject.from_wave_file("Notes/Si 2.wav")
 si2_isPressed = 0
 
 def si2_app(event=True) :
@@ -962,7 +966,7 @@ def si2_rel(event=True) :
 
 
     # DO# - Octave 2
-do2_n_note = sa.WaveObject.from_wave_file("186942__lemoncreme__piano-melody.wav")
+do2_n_note = sa.WaveObject.from_wave_file("Notes/Do dièse 2.wav")
 do2_n_isPressed = 0
 
 def do2_n_app(event=True) :
@@ -1005,7 +1009,7 @@ def do2_n_rel(event=True) :
 
 
     # RE# - Octave 2
-re2_n_note = sa.WaveObject.from_wave_file("186942__lemoncreme__piano-melody.wav")
+re2_n_note = sa.WaveObject.from_wave_file("Notes/Re dièse 2.wav")
 re2_n_isPressed = 0
 
 def re2_n_app(event=True) :
@@ -1048,7 +1052,7 @@ def re2_n_rel(event=True) :
 
 
     # FA# - Octave 2
-fa2_n_note = sa.WaveObject.from_wave_file("186942__lemoncreme__piano-melody.wav")
+fa2_n_note = sa.WaveObject.from_wave_file("Notes/Fa dièse 2.wav")
 fa2_n_isPressed = 0
 
 def fa2_n_app(event=True) :
@@ -1091,7 +1095,7 @@ def fa2_n_rel(event=True) :
 
 
     # SOL# - Octave 2
-sol2_n_note = sa.WaveObject.from_wave_file("186942__lemoncreme__piano-melody.wav")
+sol2_n_note = sa.WaveObject.from_wave_file("Notes/Sol dièse 2.wav")
 sol2_n_isPressed = 0
 
 def sol2_n_app(event=True) :
@@ -1134,7 +1138,7 @@ def sol2_n_rel(event=True) :
 
 
     # LA# - Octave 2
-la2_n_note = sa.WaveObject.from_wave_file("186942__lemoncreme__piano-melody.wav")
+la2_n_note = sa.WaveObject.from_wave_file("Notes/La dièse 2.wav")
 la2_n_isPressed = 0
 
 def la2_n_app(event=True) :
