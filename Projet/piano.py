@@ -1,10 +1,6 @@
 # Import des modules nécessaires
 from tkinter import *
-from PIL import ImageTk, Image
-import simpleaudio as sa
-import time
-import csv
-import os
+import simpleaudio as sa, time, csv, os
 
 # Initialisation de la fenêtre
 fenetre = Tk()
