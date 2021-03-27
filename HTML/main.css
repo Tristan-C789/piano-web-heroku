@@ -15,7 +15,6 @@ body {
 }
 
 #gauche {
-    float: left;
     width: 60%;
     height: 100%;
 	display:inline-block;

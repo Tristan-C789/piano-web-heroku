@@ -598,6 +598,7 @@ def closeExplorer():
     global isPlaying
     isPlaying = False
     print("Explorer fermé - fin de l'enregistrement")
+    frame.update()
     explorer.destroy()
 
 
