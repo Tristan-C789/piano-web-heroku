@@ -35,9 +35,10 @@ h1 {
 
 .cards {
 	display:inline-block;
-	width: 300px;
+	width: 40%;
 	height: 150px;
 	margin: 30px;
+    margin-bottom: 120px;
 	border: 2px double #D4AF37;
 	border-radius: 12px;
 	transition: transform .2s;
@@ -46,6 +47,7 @@ h1 {
 	color: #D4AF37;
 	font-family: 'Roboto', sans-serif;
 	text-decoration: none;
+    line-height: 150px;
 }
 
 .cards:hover {

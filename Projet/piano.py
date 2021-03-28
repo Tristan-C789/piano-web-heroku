@@ -37,7 +37,7 @@ la2_n_note = sa.WaveObject.from_wave_file("Notes/La dièse 2.wav")
 fenetre = Tk()
 fenetre.title("Piano - 2021")
 fenetre.geometry("1300x500")
-fenetre.minsize(1200, 400)
+fenetre.minsize(1200, 500)
 icon = PhotoImage(file='piano.gif')
 fenetre.tk.call('wm', 'iconphoto', fenetre._w, icon)
 
