@@ -140,6 +140,7 @@ def play(fichier):
         reader = csv.DictReader(f)
         for ligne in reader:
             morceaux.append(ligne)
+    print(len(morceaux), morceaux)
     maxEndTime = 0
     maxEndTimeNb = 0
     for i, notes in enumerate(morceaux):
@@ -151,7 +152,7 @@ def play(fichier):
                       float(morceaux[0]["startTime"])), 2)
     print("Durée de l'enregistrement :", round(duration, 2),
           "secondes\nDébut de l'écoute de l'enregistrement...")
-    start = time.time()
+    start = time.time() + 1 # Le + 1 permet d'éviter beaucoup de bug - aussi responsable du petit silence en début de replay
     do1rec = 0
     re1rec = 0
     mi1rec = 0
@@ -200,8 +201,9 @@ def play(fichier):
                                length=300)
     progress.pack(expand=True)
     times = 0.01
-
+    i = 0
     while time.time() < (start + duration):
+        i+=1
         fenetre.update()
         if time.time() > (start + (times * duration)):
             times += 0.01
@@ -444,8 +446,7 @@ def play(fichier):
                             round((float(notes["endTime"]) -
                                    float(notes["startTime"])), 2), "secondes")
                         la2Nrec += 1
-
-            if c == b:  # Vérification de s'il est temps de stopper une note
+            if c == b and i > 3:  # Vérification de s'il est temps de stopper une note
 
                 # Première Octave
                 if notes["note"] == "do1":

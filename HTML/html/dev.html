@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title>Piano - Devlog</title>
+        <link rel="shortcut icon" href="../rsc/piano.ico" type="image/x-icon" />
+        <link href="../css/second.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+        <div id="main">
+            <h1>
+                Devlog - Tristan Cendan
+            </h1>
+            <p>
+                Avec plus de 2000 lignes de codes, notre projet fait preuve d'une certaine complexité, construite au fur et à mesure de notre avancée. Nous avons dû faire face à différents soucis, et nous avons dû trouver des solutions pour chacun d'entre eux. Cette page est un compte-rendu des problèmes rencontrés, et de nos solutions face à ceux-ci.
+            </p>
+            <h2>
+                1. Commencement
+            </h2>
+            <p>
+                Dès le début, des soucis ont été rencontrés. Nous étions au départ parti pour utiliser une image faite sur Paint pour le piano, mais nous nous sommes vite rendu compte qu'il était impossible, ou en tout cas très dur, de le rendre interactif.En conséquence, nous avons dû recréer le piano en utilisant un canvas, et des rectangles pour chaque touche.
+            </p>
+            <h2>
+                2. L'arrangement
+            </h2>
+            <p>
+                Un soucis assez mineur mais qui a tout de même posé un gros problème au début de notre projet était l'arrangement des touches sur le clavier de l'ordinateur. En effet, il fallait faire rentrer 24 touches sur un clavier. De plus, avec la façon dont <a href="https://docs.python.org/3/library/tkinter.html">Tkinter</a> fonctionne, certaines touches spécifiquement françaises ne pouvaient être utilisée. Nous avons donc dû redoubler d'imagination pour surpasser ce problème. Au final, nous nous sommer arrêter sur une configuration sur trois étages. Les touches A à P sont ainsi reliée aux dix notes en dièses, les touches de S à K sont destinées à la première Octave, et les touches de W à la virgule sont reservée pour la deuxième Octave.
+            </p>
+            <h2>
+                3. Le soucis du son
+            </h2>
+            <p>
+                Nous avons choisi comme module audio <a href="https://pypi.org/project/simpleaudio/">SimpleAudio</a>, de par ses fonctionnalité et sa facilité de prise en main. Cependant, à cause de la façon dont <a href="https://docs.python.org/3/library/tkinter.html">Tkinter</a> gère les touches, le son des notes pouvaient être répété à l'infini si l'utilisateur laissait la touche correspondante appuyée. Il a donc fallu faire appel à un compteur, permettant ainsi de savoir si la touche est déjà appuyée et donc de ne la jouer qu'une seule fois au même moment.
+            </p>
+            <h2>
+                4. L'enregistrement
+            </h2>
+            <p>
+                Dans le but de permettre à l'utilisateur de pouvoir enregistrer ses morceaux, nous avons dû redoubler d'imagination. Nous avons choisi d'enregistrer trois paramètres à chaque pressement de note. Premièrement la note pressée, ensuite le temps <a href="https://fr.wikipedia.org/wiki/Heure_Unix">Unix</a> de début et de même pour le temps de fin. Ces trois données sont ensuite enregistrées dans un fichier format <a href="https://docs.python.org/3/library/csv.html">CSV</a>. Grâce à ce procédé entièrement propre à notre logiciel, nous pouvons savoir quelle touche a été pressée, à quel moment, et pendant combien de temps.
+            </p>
+            <h2>
+                5. La sauvegarde
+            </h2>
+            <p>
+                Après que l'utilisateur ait finit son enregistrement, il lui est demandé un nom pour son enregistrement. En réalité, ce nom est aussi celui du fichier CSV créé. Un nom temporaire lui est d'abord attribué, puis l'étape obligatoire de choix de nom renomme le fichier final grâce au module <a href="https://docs.python.org/3/library/os.html">OS</a>.  
+            </p>
+            <h2>
+                6. Le replay
+            </h2>
+            <p>
+                Cette étape fut la plus complexe à mettre en place. En effet, elle est même très complexe à expliquer, je vais donc faire de mon mieux pour l'expliquer de la manière la plus synthétique possible. Lorsque l'utilisateur choisit un fichier à jouer, le programme va commencer une boucle, qui va en permanence déterminer s'il est temps de commencer à jouer une note ou au contraire s'il est temps de terminer de jouer une note. L'interface est elle-aussi modifiée pour permettre d'affiche une barre qui avance au fur et à mesure que l'enregistrement avance. Pour des raisons de simplicité, la fenêtre montrant tous les enregistrements est simplement fermée lorsqu'un enregistrement a fini de jouer.
+            </p>
+            <h2>
+                7. Le futur ?
+            </h2>
+            <p>
+                Si nous avions à continuer notre projet, je pense que je me concenterais d'abord sur l'optimisation du programme grâce à la factorisation des nombreuses fonctions. En effet, par soucis de simplicité, chaque touches possède ses propres fonctions, ce qui au total rajoute plus de 1000 lignes de code. Par ailleurs, il me plairait de rajouter une fonction permettant d'avoir accès à d'autres octaves, puisque même si deux sont suffisantes, un véritable piano en possède plus de 7. 
+            </p>
+            <a href="main.html" id="back">
+                Revenir à l'accueil
+            </a>
+        </div>
+    </body>
+</html>
