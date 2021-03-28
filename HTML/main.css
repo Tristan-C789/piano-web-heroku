@@ -27,7 +27,6 @@ h1 {
     font-family: 'Roboto', sans-serif;
     font-size: 60px;
     margin: 30px;
-	margin-top: 50px;
     color: #D4AF37;
     
     
@@ -37,8 +36,7 @@ h1 {
 	display:inline-block;
 	width: 40%;
 	height: 150px;
-	margin: 30px;
-    margin-bottom: 120px;
+	margin: 20px 30% 50px 30%;
 	border: 2px double #D4AF37;
 	border-radius: 12px;
 	transition: transform .2s;
@@ -52,6 +50,52 @@ h1 {
 
 .cards:hover {
 	transform: scale(1.2);
+    box-shadow: 2px 2px;
+    font-size: 20px;
+}
+
+#download {
+    margin-left: auto;
+    display: inline-block;
+}
+
+#downloadButton {
+    transition: transform .1s;
+}
+
+#dCircle {
+    fill: white;
+    stroke: #D4AF37;
+    stroke-width: 4;
+}
+
+#dArrow {
+    fill: #D4AF37;
+}
+
+#downloadButton:hover {
+    transform: scale(1.1);
+}
+
+#downloadButton:hover #dCircle {
+    stroke: #9c7b0e;
+}
+
+#downloadButton:hover #dArrow {
+    fill: #9c7b0e;
+}
+
+#downloadButton:active {
+    transform: scale(0.2);
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    margin: 12px;
+    font-size: 12px;
+    text-align: left;
+    font-family: 'Roboto', sans-serif;
 }
 
 #droite{
@@ -61,4 +105,37 @@ h1 {
     background-color: #000336;
 	padding-bottom: 100%;
     
+}
+
+#pianoimg {
+    margin-top: 10%;
+    width: 80%;
+    height: auto;
+}
+
+p {
+    margin-top: 80px;
+    color: grey;
+    font-size: 18px;
+    font-family: 'Roboto', sans-serif;
+    font-style: italic;
+}
+
+svg {
+    margin-top: 10px;
+}
+
+#etoiles {
+    fill: #d4af37;
+    stroke: #9c7b0e;
+}
+
+#legendeAvis {
+    text-align: right;
+    font-size: 14px;
+    color: darkgray;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 600;
+    font-style: normal;
+    margin-right: 20px;
 }
