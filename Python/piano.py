@@ -48,7 +48,10 @@ fenetre.tk.call('wm', 'iconphoto', fenetre._w, icon)
 recordnb = 0
 recording = False
 
-
+if not os.path.exists("Enregistrements") :
+    print("Dossier manquant, création en cours...")
+    os.mkdir('Enregistrements')
+        
 def startRecording():
     try:
         os.makedirs(os.getcwd() + "/Enregistrements")
@@ -60,12 +63,12 @@ def startRecording():
         print("Enregistrement débuté")
         menuEnregistrer.entryconfigure(0, state=DISABLED)
         menuEnregistrer.entryconfigure(1, state=NORMAL)
+        recordnb += 1
         with open('Enregistrements/tempName.csv', 'w', newline='') as file:
             global clefs
             clefs = ['note', 'startTime', 'endTime']
             writer = csv.writer(file)
             writer.writerow(clefs)
-        recordnb += 1
         global notif
         notif = Label(fenetre, text="Enregistrement en cours...")
         notif.pack()
@@ -627,8 +630,9 @@ def parcourir():
     Files = []
     global nomFichiers
     nomFichiers = []
-    path = os.getcwd() + "/Enregistrements"
+    path = os.getcwd() + "\\Enregistrements"
     filename = ""
+    print(os.listdir(path))
     if (os.listdir(path)) == []:
         erreur = Label(canvas, text="Aucun enregistrement disponible")
         erreur.pack(expand=True)
