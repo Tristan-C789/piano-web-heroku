@@ -600,7 +600,7 @@ def scrollable(canvas):
 def closeExplorer():
     global isPlaying
     isPlaying = False
-    print("Explorer fermé - fin de l'enregistrement")
+    print("Explorer fermé")
     frame.update()
     explorer.destroy()
 
@@ -2134,3 +2134,5 @@ fenetre.bind('<KeyPress-p>', la2_n_app)
 fenetre.bind('<KeyRelease-p>', la2_n_rel)
 
 fenetre.mainloop()
+
+print("Piano fermé")

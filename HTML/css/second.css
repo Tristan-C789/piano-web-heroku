@@ -36,6 +36,25 @@ table {
     border-spacing: 0;
 }
 
+tr:nth-child(even) {
+    background-color: lightgrey;
+}
+
 tr {
-    border-top: 30px solid transparent;
+    border-top: 50px solid transparent;
+}
+
+#back {
+    display: block;
+    margin: auto;
+    text-align: center;
+    margin-top: 50px;
+    text-decoration: none;
+    font-size: 20px;
+    color: black;
+    font-weight: 600;
+}
+
+#back:hover {
+    color: rgb(138, 136, 136);
 }
